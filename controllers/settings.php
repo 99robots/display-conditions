@@ -19,6 +19,11 @@ if ( !class_exists('NNR_Display_Conditions_Base_v1') ) {
 	require_once( dirname(dirname(__FILE__)) . '/base.php');
 }
 
+/**
+ * NNR_Display_Conditions_Settings_v1 class.
+ *
+ * @extends NNR_Display_Conditions_Base_v1
+ */
 class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 {
 
 	/**
@@ -188,9 +193,11 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
+		$post_type_names = get_post_types(array('public' => true));
+
 		$code = '<!-- Post Types -->';
 
-		foreach (get_post_types(array('public' => true)) as $post_type) {
+		foreach ( $post_type_names as $post_type) {
 
 		$code .= '<div class="' . $this->prefix . 'trigger-post-type" id="' . $this->prefix . 'trigger-post-type-' . $post_type . '">
 
@@ -215,6 +222,21 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		</div>';
 
+		}
+
+		// Excludes
+
+		foreach ( $post_type_names as $post_type) {
+
+			$code .= '<!-- Excludes -->
+
+			<div class="form-group ' . $this->prefix . 'trigger-post-type-exclude ' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '">
+				<label for="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" class="col-sm-3 control-label">' . __('Exclude ' . ucfirst($post_type) . 's', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<input class="form-control" id="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['exclude']) ? $post_types[$post_type]['exclude'] : '' ) . '"/>' .
+					$help_text .
+				'</div>
+			</div>';
 		}
 
 		return $code;
@@ -348,6 +370,38 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	}
 
 	/**
+	 * Display the Display Screen Field
+	 *
+	 * @access public
+	 * @param mixed $display_screen
+	 * @param string $default (default: '')
+	 * @param mixed $help_text (default: null)
+	 * @return void
+	 */
+	function display_display_screen( $display_screen, $default = '', $help_text = null ) {
+
+		if ( isset($help_text) ) {
+			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
+		}
+
+		$code = '<!-- Display Screen -->
+
+		<div class="form-group">
+			<label for="' . $this->prefix . 'trigger-display-screen" class="col-sm-3 control-label">' . __('Display on Screen', $this->text_domain) . '</label>
+			<div class="col-sm-9">
+				<select id="' . $this->prefix . 'trigger-display-screen" name="' . $this->prefix . 'trigger-display-screen">
+					<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Display on both Computers and Mobile Devices', $this->text_domain) . '</option>
+					<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Display only on Computers', $this->text_domain) . '</option>
+					<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Display only on Mobile Devices', $this->text_domain) . '</option>
+				</select>' .
+			$help_text .
+			'</div>
+		</div>';
+
+		return $code;
+	}
+
+	/**
 	 * Display the name field
 	 *
 	 * @access public
@@ -367,8 +421,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		foreach (get_post_types(array('public' => true)) as $post_type) {
 			$post_types[$post_type] = array(
-				'all'	=> isset($_POST[$this->prefix . 'trigger-post-type-all-' . $post_type]) && isset($_POST[$this->prefix . 'trigger-post-type-all-' . $post_type]) ? true : false,
-				'id'	=> isset($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) : '',
+				'all'		=> isset($_POST[$this->prefix . 'trigger-post-type-all-' . $post_type]) && isset($_POST[$this->prefix . 'trigger-post-type-all-' . $post_type]) ? true : false,
+				'id'		=> isset($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) : '',
+				'exclude'	=> isset($_POST[$this->prefix . 'trigger-post-type-exclude-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-exclude-' . $post_type]) : '',
 			);
 		}
 
@@ -381,6 +436,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'referrer_domain'	=> isset($_POST[$this->prefix . 'trigger-referrer-domain']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-referrer-domain']) : '',
 			'users'				=> isset($_POST[$this->prefix . 'trigger-users']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-users']) : '',
 			'roles'				=> $roles,
+			'display_screen'	=> isset($_POST[$this->prefix . 'trigger-display-screen']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-display-screen']) : '',
 		);
 
 	}
