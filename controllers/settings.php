@@ -86,6 +86,30 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	}
 
 	/**
+	 * Display all the settings
+	 *
+	 * @access public
+	 * @param mixed $display_settings
+	 * @param string $args (default: array('default' => array())
+	 * @param array 'help-text' (default: > array()))
+	 * @return void
+	 */
+	function display_all_settings( $display_settings, $args = array('default' => array(), 'help-text' => array()) ) {
+
+		echo $this->display_display_on($display_settings['display_on']);
+		echo $this->display_categories($display_settings['categories']);
+		echo $this->display_tags($display_settings['tags']);
+		echo $this->display_post_types($display_settings['post_types']);
+		echo $this->display_excludes($display_settings['post_types']);
+		echo $this->display_referrer_type($display_settings['referrer_type']);
+		echo $this->display_referrer_domain($display_settings['referrer_domain']);
+		echo $this->display_users($display_settings['users']);
+		echo $this->display_user_roles($display_settings['roles']);
+		echo $this->display_display_screen($display_settings['display_screen']);
+
+	}
+
+	/**
 	 * Display the Display On field
 	 *
 	 * @access public
@@ -206,7 +230,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			<div class="form-group ' . $this->prefix . 'trigger-post-type-all-' . $post_type . '">
 				<label for="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" class="col-sm-3 control-label">' . __('All', $this->text_domain) . '</label>
 				<div class="col-sm-9">
-					<input class="form-control ' . $this->prefix . 'trigger-post-type-all" id="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" data-post="' . $post_type . '" type="checkbox" ' . (isset($post_types[$post_type]['all']) && $post_types[$post_type]['all'] ? 'checked="checked"' : '' ) . '/>
+					<input class="' . $this->prefix . 'trigger-post-type-all" id="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" data-post="' . $post_type . '" type="checkbox" ' . (isset($post_types[$post_type]['all']) && $post_types[$post_type]['all'] ? 'checked="checked"' : '' ) . '/>
 				</div>
 			</div>
 
@@ -223,6 +247,29 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 		</div>';
 
 		}
+
+		return $code;
+
+	}
+
+	/**
+	 * Display the Post Type fields
+	 *
+	 * @access public
+	 * @param mixed $display_on
+	 * @param string $default (default: '')
+	 * @param mixed $help_text (default: null)
+	 * @return void
+	 */
+	function display_excludes( $post_types, $default = '', $help_text = null ) {
+
+		if ( isset($help_text) ) {
+			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
+		}
+
+		$post_type_names = get_post_types(array('public' => true));
+
+		$code = '<!-- Excludes -->';
 
 		// Excludes
 
