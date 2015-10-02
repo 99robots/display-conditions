@@ -38,15 +38,6 @@ class NNR_Display_Conditions_Display_v1 extends NNR_Display_Conditions_Base_v1 {
 
 		global $post;
 
-		// Check for excluded posts
-
-		if ( is_singular() &&
-			 isset($display_condidtions[$post->post_type]['exclude']) &&
-			 in_array($post->ID, explode(',', $display_condidtions[$post->post_type]['exclude'])) ) {
-
-    		return false;
-		}
-
 		// Check if mobile
 
     	if ( isset($display_condidtions['display_screen'] ) &&
@@ -86,46 +77,73 @@ class NNR_Display_Conditions_Display_v1 extends NNR_Display_Conditions_Base_v1 {
 
 		global $post;
 
+		// Single Pages or Posts
+
+		if ( is_singular() ) {
+
+			// Do not show
+
+			if ( isset($display_condidtions['taxonomies'][$post->post_type]['type']) && $display_condidtions['taxonomies'][$post->post_type]['type'] == 'none' ) {
+				return false;
+			}
+
+			// Check for excluded posts
+
+			if ( isset($display_condidtions['post_types'][$post->post_type]['exclude']) &&
+				 $display_condidtions['post_types'][$post->post_type]['exclude'] != '' &&
+				 in_array($post->ID, explode(',', $display_condidtions['post_types'][$post->post_type]['exclude'])) ) {
+	    		return false;
+			}
+
+			$taxonomies = get_object_taxonomies( $post->post_type, 'objects' );
+
+			// Check for excluded terms
+
+			foreach ( $taxonomies as $taxonomy_slug => $taxonomy ) {
+
+				if ( isset($display_condidtions['post_types'][$post->post_type]['type']) && $display_condidtions['post_types'][$post->post_type]['type'] == 'all' &&
+					 isset($display_condidtions['taxonomies'][$taxonomy_slug]['exclude']) &&
+					 $display_condidtions['taxonomies'][$taxonomy_slug]['exclude'] != '' &&
+					 has_term(explode(',', $display_condidtions['taxonomies'][$taxonomy_slug]['exclude']), $taxonomy_slug, $post->ID) ) {
+
+		    		return false;
+				}
+
+			}
+
+			// Show Post - ID
+
+			if ( isset($display_condidtions['post_types'][$post->post_type]['type']) && $display_condidtions['post_types'][$post->post_type]['type'] == 'specific' && in_array($post->ID, explode(',', $display_condidtions['post_types'][$post->post_type]['id'])) ) {
+				return true;
+			}
+
+			// Show Post from Term
+
+			foreach ( $taxonomies as $taxonomy_slug => $taxonomy ) {
+
+				if ( isset($display_condidtions['post_types'][$post->post_type]['type']) && $display_condidtions['post_types'][$post->post_type]['type'] == 'specific_' . $taxonomy_slug && has_term(explode(',', $display_condidtions['taxonomies'][$taxonomy_slug]['id']), $taxonomy_slug, $post->ID) ) {
+					return true;
+				}
+
+			}
+
+			// Show Post - All
+
+			if ( isset($display_condidtions['post_types'][$post->post_type]['type']) && $display_condidtions['post_types'][$post->post_type]['type'] == 'all' ) {
+				return true;
+			}
+		}
+
 		// Site
 
-		if ( isset($display_condidtions['display_on']) && $display_condidtions['display_on'] == 'site' ) {
+		if ( isset($display_condidtions['sitewide']) && $display_condidtions['sitewide'] ) {
 			return true;
 		}
 
 		// Front Page
 
-		if ( isset($display_condidtions['display_on']) && $display_condidtions['display_on'] == 'frontpage' && ( is_front_page() || is_home() ) ) {
+		if ( isset($display_condidtions['frontpage']) && $display_condidtions['frontpage'] && ( is_front_page() || is_home() ) ) {
 			return true;
-		}
-
-		// Single Pages or Posts
-
-		if ( is_singular() ) {
-
-			// Post Category
-
-			if ( isset($display_condidtions['display_on']) && $display_condidtions['display_on'] == 'category' && isset($display_condidtions['category']) && in_category(explode(',', $display_condidtions['category']['id']), $post->ID) ) {
-				return true;
-			}
-
-			// Post Tag
-
-			if ( isset($display_condidtions['display_on']) && $display_condidtions['display_on'] == 'tag' && isset($display_condidtions['tag']) && has_tag(explode(',', $display_condidtions['tag']['id']), $post->ID) ) {
-				return true;
-			}
-
-			// Post - All
-
-			if ( isset($display_condidtions['display_on']) && $display_condidtions['display_on'] == $post->post_type && isset($display_condidtions['post_types'][$post->post_type]) && isset($display_condidtions['post_types'][$post->post_type]['all']) && $display_condidtions['post_types'][$post->post_type]['all'] ) {
-				return true;
-			}
-
-			// Post - ID
-
-			if ( isset($display_condidtions['display_on']) && $display_condidtions['display_on'] == $post->post_type && isset($display_condidtions['post_types'][$post->post_type]) && isset($display_condidtions['post_types'][$post->post_type]['all']) && !$display_condidtions['post_types'][$post->post_type]['all'] &&  in_array($post->ID, explode(',', $display_condidtions['post_types'][$post->post_type]['id'])) ) {
-				return true;
-			}
-
 		}
 
 		// safeguard return false

@@ -8,111 +8,23 @@ jQuery(document).ready(function($){
 
 	// Hide all settings
 
-	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type').hide();
-	$('.' + nnr_display_conditions_data.prefix + 'trigger-category').hide();
-	$('.' + nnr_display_conditions_data.prefix + 'trigger-tag').hide();
+	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').hide();
 
-	if ($('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').val() == 'category') {
-	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-category').show();
-  	} else if ($('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').val() == 'tag') {
-	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-tag').show();
-  	} else {
-	  	$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-' + $('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').val()).show();
+	if (!$('#' + nnr_display_conditions_data.prefix + 'trigger-sitewide').prop('checked')) {
+	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').show();
   	}
 
-  	$('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').change(function(){
+  	$('#' + nnr_display_conditions_data.prefix + 'trigger-sitewide').change(function(){
 
 	  	// Hide all settings
 
-		$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type').hide();
-		$('.' + nnr_display_conditions_data.prefix + 'trigger-category').hide();
-		$('.' + nnr_display_conditions_data.prefix + 'trigger-tag').hide();
+		$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').hide();
 
-		if ($(this).val() == 'category') {
-		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-category').show();
-	  	} else if ($(this).val() == 'tag') {
-		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-tag').show();
-	  	} else {
-		  	$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-' + $(this).val()).show();
+		if (!$(this).prop('checked')) {
+		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').show();
 	  	}
 
   	});
-
-	/* ============================================================================
-	 *
-	 * Selectize - Categories
-	 *
-	 =========================================================================== */
-
-	$.post(nnr_display_conditions_data.ajaxurl, {'action': 'nnr_dis_con_get_categories'}, function(response) {
-
-		response = $.parseJSON(response);
-
-		// Create an easy interface for selecting tags
-
-	  	var tag_options = [];
-
-	  	$.each(response, function( index, value ) {
-		  	tag_options.push( {id: value.term_id, name: value.name} );
-		});
-
-	  	$('#' + nnr_display_conditions_data.prefix + 'trigger-category-id').selectize({
-		  	plugins: ['remove_button'],
-		  	valueField: 'id',
-			labelField: 'name',
-			searchField: 'name',
-		  	options: tag_options,
-	  	});
-	});
-
-	// Category
-
-	$('#' + nnr_display_conditions_data.prefix + 'trigger-category-all').click(function() {
-		if ($(this).is(':checked')) {
-			$('#' + nnr_display_conditions_data.prefix + 'trigger-category-id-div').hide();
-		} else{
-			$('#' + nnr_display_conditions_data.prefix + 'trigger-category-id-div').show();
-		}
-	});
-
-	if ($('#' + nnr_display_conditions_data.prefix + 'trigger-category-all').is(':checked')) {
-		$('#' + nnr_display_conditions_data.prefix + 'trigger-category-id-div').hide();
-	}
-
-	/* ============================================================================
-	 *
-	 * Selectize - Tags
-	 *
-	 =========================================================================== */
-
-	$.post(nnr_display_conditions_data.ajaxurl, {'action': 'nnr_dis_con_get_tags'}, function(response) {
-
-		response = $.parseJSON(response);
-
-		// Create an easy interface for selecting tags
-
-	  	var tag_options = [];
-
-	  	$.each(response, function( index, value ) {
-		  	tag_options.push( {id: value.term_id, name: value.name} );
-		});
-
-	  	$('#' + nnr_display_conditions_data.prefix + 'trigger-tag-id').selectize({
-		  	plugins: ['remove_button'],
-		  	valueField: 'id',
-			labelField: 'name',
-			searchField: 'name',
-		  	options: tag_options,
-	  	});
-
-	  	$('#' + nnr_display_conditions_data.prefix + 'recent-posts-tag').selectize({
-		  	plugins: ['remove_button'],
-		  	valueField: 'id',
-			labelField: 'name',
-			searchField: 'name',
-		  	options: tag_options,
-	  	});
-	});
 
 	/* ============================================================================
 	 *
@@ -120,24 +32,58 @@ jQuery(document).ready(function($){
 	 *
 	 =========================================================================== */
 
-  	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-all').change(function() {
+	$.each(nnr_display_conditions_data.post_types, function(index, value) {
 
-	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id').hide();
+		// Hide and show the settings
 
-		if ( !$(this).is(':checked') ) {
-			$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id-' + $('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').val()).show();
+		$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-type-' + value).change(function() {
+
+		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id-' + value).hide();
+		  	$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-' + value + ' .' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-id').hide();
+		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-all-' + value).hide();
+
+			if ( $(this).val() == 'specific' ) {
+				$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id-' + value).show();
+			}
+
+			if ( $(this).val() == 'specific_' + $(this).find(":selected").data('taxonomy') ) {
+				$('.' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-id-' + $(this).find(":selected").data('taxonomy')).show();
+			}
+
+			if ( $(this).val() != 'none' ) {
+				$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-all-' + value).show();
+			}
+		});
+
+		$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id-' + value).hide();
+		$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-' + value + ' .' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-id').hide();
+	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-all-' + value).hide();
+
+		if ( $('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-type-' + value).val() == 'specific' ) {
+			$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id-' + value).show();
 		}
-	});
 
-	$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id').hide();
+		if ( $('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-type-' + value).val() != 'none' ) {
+			$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-all-' + value).show();
+		}
 
-	if ( !$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-all-' + $('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').val()).is(':checked')) {
-		$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-id-' + $('#' + nnr_display_conditions_data.prefix + 'trigger-display-on').val()).show();
-	}
+		var tax = $('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-type-' + value).find(":selected").attr('data-taxonomy');
 
-	$('#' + nnr_display_conditions_data.prefix + 'trigger-display-on option').each(function() {
+		if ( typeof(tax) != 'undefined' ) {
 
-		$.post(nnr_display_conditions_data.ajaxurl, {'action': 'nnr_dis_con_get_posts', 'post_type': $(this).val()}, function(response) {
+			$('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-' + value + ' .' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-id').hide();
+
+			if ( $('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-type-' + value).val() == 'specific_' + tax ) {
+				$('.' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-id-' + tax).show();
+			}
+
+		}
+
+		if ( $('#' + nnr_display_conditions_data.prefix + 'trigger-post-type-type-' + value).val() != 'none' ) {
+			$('.' + nnr_display_conditions_data.prefix + 'trigger-post-type-all-' + value).show();
+		}
+
+		$.post(nnr_display_conditions_data.ajaxurl, {'action': 'nnr_dis_con_get_posts', 'post_type': value}, function(response) {
 
 			response = $.parseJSON(response);
 
@@ -172,42 +118,87 @@ jQuery(document).ready(function($){
 
 	/* ============================================================================
 	 *
+	 * Selectize - Taxonomies
+	 *
+	 =========================================================================== */
+
+	$.each(nnr_display_conditions_data.taxonomies, function(index, value) {
+
+		$.post(nnr_display_conditions_data.ajaxurl, {'action': 'nnr_dis_con_get_terms', 'taxonomy': value.name}, function(response) {
+
+			response = $.parseJSON(response);
+
+			// Create an easy interface for selecting tags
+
+		  	var term_options = [];
+		  	var taxonomy = '';
+
+		  	$.each(response, function( index, value ) {
+			  	term_options.push( {id: value.term_id, name: value.name} );
+			  	taxonomy = value.taxonomy;
+			});
+
+			$('#' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-exclude-' + taxonomy).selectize({
+			  	plugins: ['remove_button'],
+			  	valueField: 'id',
+				labelField: 'name',
+				searchField: 'name',
+			  	options: term_options,
+		  	});
+
+		  	$('#' + nnr_display_conditions_data.prefix + 'trigger-taxonomy-id-' + taxonomy).selectize({
+			  	plugins: ['remove_button'],
+			  	valueField: 'id',
+				labelField: 'name',
+				searchField: 'name',
+			  	options: term_options,
+		  	});
+		});
+
+	});
+
+	/* ============================================================================
+	 *
 	 * Selectize - Referrer Domain
 	 *
 	 =========================================================================== */
 
-	var referrer_options = [
-		{id: 't.co'},
-		{id: 'www.facebook.com'},
-		{id: 'plus.url.google.com'},
-		{id: 'www.linkedin.com'},
-	];
+	if ( $('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').length != 0 ) {
 
-	var temp_referrer_options = $('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').attr('data-urls').split(',');
+		var referrer_options = [
+			{id: 't.co'},
+			{id: 'www.facebook.com'},
+			{id: 'plus.url.google.com'},
+			{id: 'www.linkedin.com'},
+		];
 
-	$.each(temp_referrer_options, function( index, value ) {
-	  	referrer_options.push({id: value});
-	});
+		var temp_referrer_options = $('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').attr('data-urls').split(',');
 
-	$('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').selectize({
-		plugins: ['remove_button'],
-		create: true,
-		valueField: 'id',
-		labelField: 'id',
-		searchField: 'id',
-		options: referrer_options,
-	});
+		$.each(temp_referrer_options, function( index, value ) {
+		  	referrer_options.push({id: value});
+		});
 
- 	// URL Referrer
+		$('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').selectize({
+			plugins: ['remove_button'],
+			create: true,
+			valueField: 'id',
+			labelField: 'id',
+			searchField: 'id',
+			options: referrer_options,
+		});
 
-	$("." + nnr_display_conditions_data.prefix + "trigger-referrer-domain").hide();
-	$("." + nnr_display_conditions_data.prefix + "trigger-referrer-" + $("#" + nnr_display_conditions_data.prefix + "trigger-referrer-type").val()).show();
+	 	// URL Referrer
 
- 	$("#" + nnr_display_conditions_data.prefix + "trigger-referrer-type").change(function() {
- 		$("." + nnr_display_conditions_data.prefix + "trigger-referrer-domain").hide();
- 		$("." + nnr_display_conditions_data.prefix + "trigger-referrer-" + $(this).val()).show();
+		$("." + nnr_display_conditions_data.prefix + "trigger-referrer-domain").hide();
+		$("." + nnr_display_conditions_data.prefix + "trigger-referrer-" + $("#" + nnr_display_conditions_data.prefix + "trigger-referrer-type").val()).show();
 
- 	});
+	 	$("#" + nnr_display_conditions_data.prefix + "trigger-referrer-type").change(function() {
+	 		$("." + nnr_display_conditions_data.prefix + "trigger-referrer-domain").hide();
+	 		$("." + nnr_display_conditions_data.prefix + "trigger-referrer-" + $(this).val()).show();
+
+	 	});
+
+	}
 
  	/* ============================================================================
 	 *

@@ -80,7 +80,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data' , array(
 			'prefix'		=> $this->prefix,
 			'ajaxurl'       => admin_url( 'admin-ajax.php' ),
-			'post_types'	=> get_post_types(array('public' => true)),
+			'post_types'	=> $this->get_post_types(),
+			'taxonomies'	=> $this->get_taxonomies(),
 		));
 
 	}
@@ -96,155 +97,245 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_all_settings( $display_settings, $args = array('default' => array(), 'help-text' => array()) ) {
 
-		echo $this->display_display_on($display_settings['display_on']);
-		echo $this->display_categories($display_settings['categories']);
-		echo $this->display_tags($display_settings['tags']);
-		echo $this->display_post_types($display_settings['post_types']);
-		echo $this->display_excludes($display_settings['post_types']);
+		// Display Headers
+
+		echo '<div class="page-header">
+		  <h1>' . __('Display On', $this->text_domain) . '</h1>
+		</div>';
+
+		echo $this->display_sitewide($display_settings['sitewide']);
+		echo $this->display_frontpage($display_settings['frontpage']);
+
+		// Post Type Headers
+
+		echo '<div class="page-header">
+		  <h1>' . __('Post Types', $this->text_domain) . '</h1>
+		</div>';
+
+		echo $this->display_post_types($display_settings['post_types'], $display_settings['taxonomies']);
+
+		// Taxonomies Headers
+
+		echo '<div class="page-header">
+		  <h1>' . __('Excludes', $this->text_domain) . '</h1>
+		</div>';
+
+		echo $this->display_post_type_excludes($display_settings['post_types']);
+		echo $this->display_taxonomy_excludes($display_settings['taxonomies']);
+
+		// Referrer Domain Headers
+
+		echo '<div class="page-header">
+		  <h1>' . __('Referrer Domain', $this->text_domain) . '</h1>
+		</div>';
+
 		echo $this->display_referrer_type($display_settings['referrer_type']);
 		echo $this->display_referrer_domain($display_settings['referrer_domain']);
+
+		// User Role Headers
+
+		echo '<div class="page-header">
+		  <h1>' . __('Users', $this->text_domain) . '</h1>
+		</div>';
+
 		echo $this->display_users($display_settings['users']);
 		echo $this->display_user_roles($display_settings['roles']);
+
+		// Screen Header
+
+		echo '<div class="page-header">
+		  <h1>' . __('Screen Size', $this->text_domain) . '</h1>
+		</div>';
+
 		echo $this->display_display_screen($display_settings['display_screen']);
 
 	}
 
 	/**
-	 * Display the Display On field
+	 * Display the Display sitewide setting
 	 *
 	 * @access public
-	 * @param mixed $display_on
+	 * @param mixed $sitewide
 	 * @param string $default (default: '')
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_display_on( $display_on, $default = '', $help_text = null ) {
+	function display_sitewide( $sitewide, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$code = '<!-- Display On -->
-		<div class="form-group">
-			<label for="' . $this->prefix . 'trigger-display-on" class="col-sm-3 control-label">' . __('Display On', $this->text_domain) . '</label>
-			<div class="col-sm-9">
-				<select id="' . $this->prefix . 'trigger-display-on" name="' . $this->prefix . 'trigger-display-on">
-					<option value="site" ' . selected('site', $display_on, false) . '>' . __('Site Wide', $this->text_domain) . '</option>
-					<option value="frontpage" ' . selected('frontpage', $display_on, false) . '>' . __('Front Page', $this->text_domain) . '</option>
-					<option value="category" ' . selected('category', $display_on, false). '>' . __('Category', $this->text_domain) . '</option>
-					<option value="tag" ' . selected('tag', $display_on, false) . '>' . __('Tag', $this->text_domain) . '</option>';
-
-					foreach (get_post_types(array('public' => true)) as $post_type) {
-						$code .= '<option value="' . $post_type . '" ' . selected($post_type, $display_on, false) . '>' . __(ucfirst($post_type), $this->text_domain) . '</option>';
-					}
-
-				$code .= '</select>' .
-				$help_text .
-			'</div>
-		</div>';
+		if ( $format == 'inline' ) {
+			$code = '<!-- Display Sitewide -->
+			<div class="form-group">
+				<label for="' . $this->prefix . 'trigger-sitewide" class="col-sm-3 control-label">' . __('Site Wide', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<input type="checkbox" id="' . $this->prefix . 'trigger-sitewide" name="' . $this->prefix . 'trigger-sitewide" ' . (isset($sitewide) && $sitewide ? 'checked="checked"' : '' ) . '/>' .
+					$help_text .
+				'</div>
+			</div>';
+		} else {
+			$code = '<!-- Display Sitewide -->
+			<div class="nnr-block-group">
+				<label>
+					<input type="checkbox" id="' . $this->prefix . 'trigger-sitewide" name="' . $this->prefix . 'trigger-sitewide" ' . (isset($sitewide) && $sitewide ? 'checked="checked"' : '' ) . '/>' . __('Site Wide', $this->text_domain) .
+					$help_text .
+				'</label>
+			</div>';
+		}
 
 		return $code;
 	}
 
 	/**
-	 * Display the Categories field
+	 * Display the Display sitewide setting
 	 *
 	 * @access public
-	 * @param mixed $categories
+	 * @param mixed $sitewide
 	 * @param string $default (default: '')
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_categories( $categories, $default = '', $help_text = null ) {
+	function display_frontpage( $frontpage, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$code = '<!-- Category -->
-		<div class="form-group ' . $this->prefix . 'trigger ' . $this->prefix . 'trigger-category">
-			<label for="' . $this->prefix . 'trigger-category-id" class="col-sm-3 control-label">' . __('Categories', $this->text_domain) . '</label>
-			<div class="col-sm-9">
-				<input id="' . $this->prefix . 'trigger-category-id" name="' . $this->prefix . 'trigger-category-id" class="form-control" type="text" value="' . (isset($categories) ? $categories :'' ) . '"/>'
-				. $help_text .
-			'</div>
-		</div>';
-
-		return $code;
-
-	}
-
-	/**
-	 * Display the Tags field
-	 *
-	 * @access public
-	 * @param mixed $tags
-	 * @param string $default (default: '')
-	 * @param mixed $help_text (default: null)
-	 * @return void
-	 */
-	function display_tags( $tags, $default = '', $help_text = null ) {
-
-		if ( isset($help_text) ) {
-			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
+		if ( $format == 'inline' ) {
+			$code = '<!-- Display Front Page -->
+			<div class="form-group ' . $this->prefix . 'trigger-sitewide">
+				<label for="' . $this->prefix . 'trigger-frontpage" class="col-sm-3 control-label">' . __('Front Page', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<input type="checkbox" id="' . $this->prefix . 'trigger-frontpage" name="' . $this->prefix . 'trigger-frontpage" ' . (isset($frontpage) && $frontpage ? 'checked="checked"' : '' ) . '/>
+					<div><a href="' . get_home_url() . '" target="_blank">' . get_home_url() . '</a></div>' .
+					$help_text .
+				'</div>
+			</div>';
+		} else {
+			$code = '<!-- Display Front Page -->
+			<div class="nnr-block-group ' . $this->prefix . 'trigger-sitewide">
+				<label for="' . $this->prefix . 'trigger-frontpage">
+					<input type="checkbox" id="' . $this->prefix . 'trigger-frontpage" name="' . $this->prefix . 'trigger-frontpage" ' . (isset($frontpage) && $frontpage ? 'checked="checked"' : '' ) . '/>' . $help_text . __('Front Page', $this->text_domain) .
+				'</label>
+			</div>';
 		}
 
-		$code = '<!-- Tag -->
-		<div class="form-group has-feedback ' . $this->prefix . 'trigger ' . $this->prefix . 'trigger-tag">
-			<label class="col-sm-3 control-label">' . __('Tags', $this->text_domain) . '</label>
-			<div class="col-sm-9">
-				<input id="' . $this->prefix . 'trigger-tag-id" name="' . $this->prefix . 'trigger-tag-id" class="form-control" type="text" value="' . (isset($tags) ? $tags :'') . '"/>'
-				. $help_text .
-			'</div>
-		</div>';
-
 		return $code;
-
 	}
 
 	/**
 	 * Display the Post Type fields
 	 *
 	 * @access public
-	 * @param mixed $display_on
+	 * @param mixed $post_types
+	 * @param mixed $taxonomies
 	 * @param string $default (default: '')
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_post_types( $post_types, $default = '', $help_text = null ) {
+	function display_post_types( $post_types, $taxonomies, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$post_type_names = get_post_types(array('public' => true));
+		$post_type_names = $this->get_post_types();
 
 		$code = '<!-- Post Types -->';
 
 		foreach ( $post_type_names as $post_type) {
 
-		$code .= '<div class="' . $this->prefix . 'trigger-post-type" id="' . $this->prefix . 'trigger-post-type-' . $post_type . '">
+			$post_type_tax = '';
 
-			<!-- All -->
+			foreach ($this->get_taxonomies(array($post_type)) as $taxonomy) {
 
-			<div class="form-group ' . $this->prefix . 'trigger-post-type-all-' . $post_type . '">
-				<label for="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" class="col-sm-3 control-label">' . __('All', $this->text_domain) . '</label>
-				<div class="col-sm-9">
-					<input class="' . $this->prefix . 'trigger-post-type-all" id="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-all-' . $post_type . '" data-post="' . $post_type . '" type="checkbox" ' . (isset($post_types[$post_type]['all']) && $post_types[$post_type]['all'] ? 'checked="checked"' : '' ) . '/>
-				</div>
-			</div>
+				$taxonomy_name = $taxonomy->name;
 
-			<!-- ID -->
+				if ( $taxonomy_name == 'post_tag' ) {
+					$taxonomy_name = 'tag';
+				}
 
-			<div class="form-group ' . $this->prefix . 'trigger-post-type-id ' . $this->prefix . 'trigger-post-type-id-' . $post_type . '">
-				<label for="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" class="col-sm-3 control-label">' . __(ucfirst($post_type) . 's', $this->text_domain) . '</label>
-				<div class="col-sm-9">
-					<input class="form-control" id="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['id']) ? $post_types[$post_type]['id'] : '' ) . '"/>' .
-					$help_text .
-				'</div>
-			</div>
+				$post_type_tax .= '<option data-taxonomy="' . $taxonomy->name . '" value="specific_' . $taxonomy->name . '" ' . selected('specific_' . $taxonomy->name, $post_types[$post_type]['type'], false) . '>' . __('Show on Specific ' . ucfirst($taxonomy_name), $this->text_domain) . '</option>';
+			}
 
-		</div>';
+			$code .= '<div class="nnr-block-group ' . $this->prefix . 'trigger-sitewide" id="' . $this->prefix . 'trigger-post-type-' . $post_type . '">';
+
+				if ( $format == 'inline' ) {
+					$code .= '<!-- Type -->
+
+					<div class="form-group ' . $this->prefix . 'trigger-post-type-type-' . $post_type . '">
+						<label for="' . $this->prefix . 'trigger-post-type-type-' . $post_type . '" class="col-sm-3 control-label">' . __(ucfirst($post_type) . 's', $this->text_domain) . '</label>
+						<div class="col-sm-9">
+							<select class="' . $this->prefix . 'trigger-post-type-type" id="' . $this->prefix . 'trigger-post-type-type-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-type-' . $post_type . '" data-post="' . $post_type . '">
+								<option value="none" ' . selected('none', $post_types[$post_type]['type'], false) . '>' . __('Do Not Show', $this->text_domain) . '</option>
+								<option value="all" ' . selected('all', $post_types[$post_type]['type'], false) . '>' . __('Show on All', $this->text_domain) . '</option>
+								<option value="specific" ' . selected('specific', $post_types[$post_type]['type'], false) . '>' . __('Show on Specific ' . ucfirst($post_type) . 's', $this->text_domain) . '</option>' . $post_type_tax .
+							'</select>
+						</div>
+					</div>
+
+					<!-- ID -->
+
+					<div class="form-group ' . $this->prefix . 'trigger-post-type-id ' . $this->prefix . 'trigger-post-type-id-' . $post_type . '">
+						<label for="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" class="col-sm-3 control-label"></label>
+						<div class="col-sm-9">
+							<input class="form-control" id="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['id']) ? $post_types[$post_type]['id'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($post_type) . '(s)', $this->text_domain) . '"/>' .
+							$help_text .
+						'</div>
+					</div>';
+				} else {
+					$code .= '<!-- Type -->
+
+					<div class="nnr-block-group ' . $this->prefix . 'trigger-post-type-type-' . $post_type . '">
+						<label for="' . $this->prefix . 'trigger-post-type-type-' . $post_type . '">' . __(ucfirst($post_type) . 's', $this->text_domain) . '</label>
+						<select class="' . $this->prefix . 'trigger-post-type-type" id="' . $this->prefix . 'trigger-post-type-type-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-type-' . $post_type . '" data-post="' . $post_type . '">
+							<option value="none" ' . selected('none', $post_types[$post_type]['type'], false) . '>' . __('Do Not Show', $this->text_domain) . '</option>
+							<option value="all" ' . selected('all', $post_types[$post_type]['type'], false) . '>' . __('Show on All', $this->text_domain) . '</option>
+							<option value="specific" ' . selected('specific', $post_types[$post_type]['type'], false) . '>' . __('Show on Specific ' . ucfirst($post_type) . 's', $this->text_domain) . '</option>' . $post_type_tax .
+						'</select>
+					</div>
+
+					<!-- ID -->
+
+					<div class="nnr-block-group ' . $this->prefix . 'trigger-post-type-id ' . $this->prefix . 'trigger-post-type-id-' . $post_type . '">
+						<input class="form-control" id="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-id-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['id']) ? $post_types[$post_type]['id'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($post_type) . '(s)', $this->text_domain) . '"/>' .
+							$help_text .
+					'</div>';
+				}
+
+				foreach ($this->get_taxonomies(array($post_type)) as $taxonomy) {
+
+					$taxonomy_name = $taxonomy->name;
+
+					if ( $taxonomy_name == 'post_tag' ) {
+						$taxonomy_name = 'tag';
+					}
+
+					if ( $format == 'inline' ) {
+
+						$code .= '<!-- Taxonomy ID -->
+
+						<div class="form-group ' . $this->prefix . 'trigger-taxonomy-id ' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '">
+							<label for="' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '" class="col-sm-3 control-label"></label>
+							<div class="col-sm-9">
+								<input class="form-control" id="' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '" name="' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '" type="text" value="' . (isset($taxonomies[$taxonomy->name]['id']) ? $taxonomies[$taxonomy->name]['id'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($taxonomy_name) . '(s)', $this->text_domain) . '"/>' .
+								$help_text .
+							'</div>
+						</div>';
+
+					} else {
+						$code .= '<!-- Taxonomy ID -->
+
+						<div class="' . $this->prefix . 'trigger-taxonomy-id ' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '">
+							<input class="form-control" id="' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '" name="' . $this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name . '" type="text" value="' . (isset($taxonomies[$taxonomy->name]['id']) ? $taxonomies[$taxonomy->name]['id'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($taxonomy_name) . '(s)', $this->text_domain) . '"/>' .
+								$help_text .
+						'</div>';
+					}
+				}
+
+			$code .= '</div>';
 
 		}
 
@@ -253,21 +344,21 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	}
 
 	/**
-	 * Display the Post Type fields
+	 * Display the Post Type Excludes fields
 	 *
 	 * @access public
-	 * @param mixed $display_on
+	 * @param mixed $post_types
 	 * @param string $default (default: '')
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_excludes( $post_types, $default = '', $help_text = null ) {
+	function display_post_type_excludes( $post_types, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$post_type_names = get_post_types(array('public' => true));
+		$post_type_names = $this->get_post_types();
 
 		$code = '<!-- Excludes -->';
 
@@ -275,15 +366,76 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		foreach ( $post_type_names as $post_type) {
 
-			$code .= '<!-- Excludes -->
+			if ( $format == 'inline' ) {
+				$code .= '<div class="form-group ' . $this->prefix . 'trigger-post-type-exclude ' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '">
+					<label for="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" class="col-sm-3 control-label">' . __('Exclude ' . ucfirst($post_type) . 's', $this->text_domain) . '</label>
+					<div class="col-sm-9">
+						<input class="form-control" id="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['exclude']) ? $post_types[$post_type]['exclude'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($post_type) . '(s)', $this->text_domain) . '"/>' .
+						$help_text .
+					'</div>
+				</div>';
+			} else {
+				$code .= '<div class="nnr-block-group ' . $this->prefix . 'trigger-post-type-exclude ' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '">
+					<label for="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" class="control-label">' . __('Exclude ' . ucfirst($post_type) . 's', $this->text_domain) . '</label>
+					<input class="form-control" id="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['exclude']) ? $post_types[$post_type]['exclude'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($post_type) . '(s)', $this->text_domain) . '"/>' .
+						$help_text .
+				'</div>';
+			}
 
-			<div class="form-group ' . $this->prefix . 'trigger-post-type-exclude ' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '">
-				<label for="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" class="col-sm-3 control-label">' . __('Exclude ' . ucfirst($post_type) . 's', $this->text_domain) . '</label>
-				<div class="col-sm-9">
-					<input class="form-control" id="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" name="' . $this->prefix . 'trigger-post-type-exclude-' . $post_type . '" type="text" value="' . (isset($post_types[$post_type]['exclude']) ? $post_types[$post_type]['exclude'] : '' ) . '"/>' .
-					$help_text .
-				'</div>
-			</div>';
+		}
+
+		return $code;
+
+	}
+
+	/**
+	 * Display the Taxonomies Excludes fields
+	 *
+	 * @access public
+	 * @param mixed $taxonomies
+	 * @param string $default (default: '')
+	 * @param mixed $help_text (default: null)
+	 * @return void
+	 */
+	function display_taxonomy_excludes( $taxonomies, $default = '', $help_text = null, $format = 'inline' ) {
+
+		if ( isset($help_text) ) {
+			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
+		}
+
+		$taxonomy_names = $this->get_taxonomies();
+
+		$code = '<!-- Excludes -->';
+
+		// Excludes
+
+		foreach ( $taxonomy_names as $taxonomy ) {
+
+			$taxonomy_name = $taxonomy->name;
+
+			if ( $taxonomy_name == 'post_tag' ) {
+				$taxonomy_name = 'tag';
+			}
+
+			if ( $format == 'inline' ) {
+
+				$code .= '<div class="form-group ' . $this->prefix . 'trigger-taxonomy-exclude ' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '">
+					<label for="' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '" class="col-sm-3 control-label">' . __('Exclude ' . ucfirst($taxonomy_name) . 's', $this->text_domain) . '</label>
+					<div class="col-sm-9">
+						<input class="form-control" id="' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '" name="' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '" type="text" value="' . (isset($taxonomies[$taxonomy->name]['exclude']) ? $taxonomies[$taxonomy->name]['exclude'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($taxonomy_name) . '(s)', $this->text_domain) . '"/>' .
+						$help_text .
+					'</div>
+				</div>';
+
+			} else {
+
+				$code .= '<div class="nnr-block-group ' . $this->prefix . 'trigger-taxonomy-exclude ' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '">
+					<label for="' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '" class="control-label">' . __('Exclude ' . ucfirst($taxonomy_name) . 's', $this->text_domain) . '</label>
+					<input class="form-control" id="' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '" name="' . $this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name . '" type="text" value="' . (isset($taxonomies[$taxonomy->name]['exclude']) ? $taxonomies[$taxonomy->name]['exclude'] : '' ) . '" placeholder="' . __('Select ' . ucfirst($taxonomy_name) . '(s)', $this->text_domain) . '"/>' .
+						$help_text .
+				'</div>';
+
+			}
 		}
 
 		return $code;
@@ -299,23 +451,35 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_referrer_type( $referrer_type, $default = '', $help_text = null ) {
+	function display_referrer_type( $referrer_type, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$code = '<!-- Referrer Type -->
-		<div class="form-group">
-			<label for="' . $this->prefix . 'trigger-referrer-type" class="col-sm-3 control-label">' . __('Referrer Type', $this->text_domain) . '</label>
-			<div class="col-sm-9">
+		if ( $format == 'inline' ) {
+			$code = '<!-- Referrer Type -->
+			<div class="form-group">
+				<label for="' . $this->prefix . 'trigger-referrer-type" class="col-sm-3 control-label">' . __('Referrer Type', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<select id="' . $this->prefix . 'trigger-referrer-type" name="' . $this->prefix . 'trigger-referrer-type">
+						<option value="any" ' .selected('any', $referrer_type, false) . '>' . __('Any Domain', $this->text_domain) . '</option>
+						<option value="specific" ' . selected('specific', $referrer_type, false) . '>' . __('Specific Domains', $this->text_domain) . '</option>
+					</select>' .
+					$help_text .
+				'</div>
+			</div>';
+		} else {
+			$code = '<!-- Referrer Type -->
+			<div class="nnr-block-group">
+				<label for="' . $this->prefix . 'trigger-referrer-type">' . __('Referrer Type', $this->text_domain) . '</label>
 				<select id="' . $this->prefix . 'trigger-referrer-type" name="' . $this->prefix . 'trigger-referrer-type">
 					<option value="any" ' .selected('any', $referrer_type, false) . '>' . __('Any Domain', $this->text_domain) . '</option>
 					<option value="specific" ' . selected('specific', $referrer_type, false) . '>' . __('Specific Domains', $this->text_domain) . '</option>
 				</select>' .
 				$help_text .
-			'</div>
-		</div>';
+			'</div>';
+		}
 
 		return $code;
 
@@ -330,20 +494,29 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_referrer_domain( $referrer_domain, $default = '', $help_text = null ) {
+	function display_referrer_domain( $referrer_domain, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$code = '<!-- Referrer -->
-		<div class="form-group ' . $this->prefix . 'trigger-referrer-domain ' . $this->prefix . 'trigger-referrer-specific">
-			<label class="col-sm-3 control-label">' . __('Referrer Domains', $this->text_domain) . '</label>
-			<div class="col-sm-9">
+		if ( $format == 'inline' ) {
+			$code = '<!-- Referrer -->
+			<div class="form-group ' . $this->prefix . 'trigger-referrer-domain ' . $this->prefix . 'trigger-referrer-specific">
+				<label class="col-sm-3 control-label">' . __('Referrer Domains', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<input class="form-control" id="' . $this->prefix . 'trigger-referrer-domain" name="' . $this->prefix . 'trigger-referrer-domain" placeholder="' . __('e.g t.co,www.facebook.com,plus.url.google.com,www.linkedin.com', $this->text_domain) . '" value="' . (isset($referrer_domain) ? $referrer_domain : $default) . '" data-urls="' . (isset($referrer_domain) ? $referrer_domain : $default) . '"/>' .
+					$help_text .
+				'</div>
+			</div>';
+		} else {
+			$code = '<!-- Referrer -->
+			<div class="nnr-block-group ' . $this->prefix . 'trigger-referrer-domain ' . $this->prefix . 'trigger-referrer-specific">
+				<label class="control-label">' . __('Referrer Domains', $this->text_domain) . '</label>
 				<input class="form-control" id="' . $this->prefix . 'trigger-referrer-domain" name="' . $this->prefix . 'trigger-referrer-domain" placeholder="' . __('e.g t.co,www.facebook.com,plus.url.google.com,www.linkedin.com', $this->text_domain) . '" value="' . (isset($referrer_domain) ? $referrer_domain : $default) . '" data-urls="' . (isset($referrer_domain) ? $referrer_domain : $default) . '"/>' .
-				$help_text .
-			'</div>
-		</div>';
+					$help_text .
+			'</div>';
+		}
 
 		return $code;
 	}
@@ -357,16 +530,30 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_users( $users, $default = '', $help_text = null ) {
+	function display_users( $users, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$code = '<!-- Users -->
-		<div class="form-group has-feedback">
-			<label for="' . $this->prefix . 'trigger-users" class="col-sm-3 control-label">' . __('Users', $this->text_domain) . '</label>
-			<div class="col-sm-9">
+		if ( $format == 'inline' ) {
+			$code = '<!-- Users -->
+			<div class="form-group">
+				<label for="' . $this->prefix . 'trigger-users" class="col-sm-3 control-label">' . __('Users', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<select id="' . $this->prefix . 'trigger-users" name="' . $this->prefix . 'trigger-users">
+						<option value="everyone" ' . selected('everyone', $users, false) . ' >' . __('Everyone', $this->text_domain) . '</option>
+						<option value="logged_in" ' . selected('logged_in', $users, false) . ' >' . __('Only Users', $this->text_domain) . '</option>
+						<option value="logged_out" ' . selected('logged_out', $users, false) . ' >' . __('Only Non-Users', $this->text_domain) . '</option>
+						<option value="specific" ' . selected('specific', $users, false) . ' >' . __('Specific User Roles', $this->text_domain) . '</option>
+					</select>' .
+					$help_text .
+				'</div>
+			</div>';
+		} else {
+			$code = '<!-- Users -->
+			<div class="nnr-block-group">
+				<label for="' . $this->prefix . 'trigger-users">' . __('Users', $this->text_domain) . '</label>
 				<select id="' . $this->prefix . 'trigger-users" name="' . $this->prefix . 'trigger-users">
 					<option value="everyone" ' . selected('everyone', $users, false) . ' >' . __('Everyone', $this->text_domain) . '</option>
 					<option value="logged_in" ' . selected('logged_in', $users, false) . ' >' . __('Only Users', $this->text_domain) . '</option>
@@ -374,8 +561,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 					<option value="specific" ' . selected('specific', $users, false) . ' >' . __('Specific User Roles', $this->text_domain) . '</option>
 				</select>' .
 				$help_text .
-			'</div>
-		</div>';
+			'</div>';
+		}
 
 		return $code;
 	}
@@ -389,7 +576,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_user_roles( $user_roles, $default = '', $help_text = null ) {
+	function display_user_roles( $user_roles, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -397,21 +584,36 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		global $wp_roles;
 
-		$code = '<!-- User Roles -->
+		if ( $format == 'inline' ) {
+			$code = '<!-- User Roles -->
+			<div class="form-group has-feedback ' . $this->prefix . 'trigger-users ' . $this->prefix . 'trigger-users-specific">
+				<label class="col-sm-3 control-label">' . __('User Roles', $this->text_domain) . '</label>
+				<div class="col-sm-9">' . $help_text;
 
-		<div class="form-group has-feedback ' . $this->prefix . 'trigger-users ' . $this->prefix . 'trigger-users-specific">
-			<label class="col-sm-3 control-label">' . __('User Roles', $this->text_domain) . '</label>
-			<div class="col-sm-9">' . $help_text;
+					foreach ($wp_roles->role_names as $role_name => $role) {
 
-				foreach ($wp_roles->role_names as $role_name => $role) {
+						$code .= '<input type="checkbox" id="' . $this->prefix . 'role-' . $role_name . '" class="' . $this->prefix . 'role" name="' . $this->prefix . 'role-' . $role_name . '" ' . (isset($user_roles[$role_name]) && $user_roles[$role_name] ? 'checked="checked"' : $default) . ' class="form-control"/>
+						<span>' . $role . '</span><br/>';
 
-					$code .= '<input type="checkbox" id="' . $this->prefix . 'role-' . $role_name . '" class="' . $this->prefix . 'role" name="' . $this->prefix . 'role-' . $role_name . '" ' . (isset($user_roles[$role_name]) && $user_roles[$role_name] ? 'checked="checked"' : $default) . ' class="form-control"/>
-					<span>' . $role . '</span><br/>';
+					}
 
-				}
+				$code .= '</div>
+			</div>';
+		} else {
+			$code = '<!-- User Roles -->
+			<div class="nnr-block-group ' . $this->prefix . 'trigger-users ' . $this->prefix . 'trigger-users-specific">
+				<div><label>' . __('User Roles', $this->text_domain) . '</label></div>
+				' . $help_text;
 
-			$code .= '</div>
-		</div>';
+					foreach ($wp_roles->role_names as $role_name => $role) {
+
+						$code .= '<input type="checkbox" id="' . $this->prefix . 'role-' . $role_name . '" class="' . $this->prefix . 'role" name="' . $this->prefix . 'role-' . $role_name . '" ' . (isset($user_roles[$role_name]) && $user_roles[$role_name] ? 'checked="checked"' : $default) . ' class="form-control"/>
+						<span>' . $role . '</span><br/>';
+
+					}
+
+			$code .= '</div>';
+		}
 
 		return $code;
 	}
@@ -425,25 +627,37 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @param mixed $help_text (default: null)
 	 * @return void
 	 */
-	function display_display_screen( $display_screen, $default = '', $help_text = null ) {
+	function display_display_screen( $display_screen, $default = '', $help_text = null, $format = 'inline' ) {
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
 		}
 
-		$code = '<!-- Display Screen -->
-
-		<div class="form-group">
-			<label for="' . $this->prefix . 'trigger-display-screen" class="col-sm-3 control-label">' . __('Display on Screen', $this->text_domain) . '</label>
-			<div class="col-sm-9">
+		if ( $format == 'inline' ) {
+			$code = '<!-- Display Screen -->
+			<div class="form-group">
+				<label for="' . $this->prefix . 'trigger-display-screen" class="col-sm-3 control-label">' . __('Display on Screen', $this->text_domain) . '</label>
+				<div class="col-sm-9">
+					<select id="' . $this->prefix . 'trigger-display-screen" name="' . $this->prefix . 'trigger-display-screen">
+						<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Display on both Computers and Mobile Devices', $this->text_domain) . '</option>
+						<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Display only on Computers', $this->text_domain) . '</option>
+						<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Display only on Mobile Devices', $this->text_domain) . '</option>
+					</select>' .
+				$help_text .
+				'</div>
+			</div>';
+		} else {
+			$code = '<!-- Display Screen -->
+			<div class="nnr-block-group">
+				<label for="' . $this->prefix . 'trigger-display-screen">' . __('Display on Screen', $this->text_domain) . '</label>
 				<select id="' . $this->prefix . 'trigger-display-screen" name="' . $this->prefix . 'trigger-display-screen">
-					<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Display on both Computers and Mobile Devices', $this->text_domain) . '</option>
-					<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Display only on Computers', $this->text_domain) . '</option>
-					<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Display only on Mobile Devices', $this->text_domain) . '</option>
-				</select>' .
-			$help_text .
-			'</div>
-		</div>';
+						<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Display on both Computers and Mobile Devices', $this->text_domain) . '</option>
+						<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Display only on Computers', $this->text_domain) . '</option>
+						<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Display only on Mobile Devices', $this->text_domain) . '</option>
+					</select>' .
+				$help_text .
+			'</div>';
+		}
 
 		return $code;
 	}
@@ -456,6 +670,32 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function get_data() {
 
+		// Post Type Data
+
+		$post_types = array();
+
+		foreach ($this->get_post_types() as $post_type) {
+			$post_types[$post_type] = array(
+				'type'		=> isset($_POST[$this->prefix . 'trigger-post-type-type-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-type-' . $post_type]) : '',
+				'id'		=> isset($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) : '',
+				'exclude'	=> isset($_POST[$this->prefix . 'trigger-post-type-exclude-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-exclude-' . $post_type]) : '',
+			);
+		}
+
+		// Taxonomies
+
+		$taxonomies = array();
+
+		foreach ($this->get_taxonomies() as $taxonomy) {
+			$taxonomies[$taxonomy->name] = array(
+				'type'		=> isset($_POST[$this->prefix . 'trigger-taxonomy-type-' . $taxonomy->name]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-taxonomy-type-' . $taxonomy->name]) : '',
+				'id'		=> isset($_POST[$this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-taxonomy-id-' . $taxonomy->name]) : '',
+				'exclude'	=> isset($_POST[$this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-taxonomy-exclude-' . $taxonomy->name]) : '',
+			);
+		}
+
+		// User Roles
+
 		global $wp_roles;
 
 		$roles = array();
@@ -464,21 +704,11 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$roles[$role_name] = isset($_POST[$this->prefix . 'role-' . $role_name]) && $_POST[$this->prefix . 'role-' . $role_name] ? true : false;
 		}
 
-		$post_types = array();
-
-		foreach (get_post_types(array('public' => true)) as $post_type) {
-			$post_types[$post_type] = array(
-				'all'		=> isset($_POST[$this->prefix . 'trigger-post-type-all-' . $post_type]) && isset($_POST[$this->prefix . 'trigger-post-type-all-' . $post_type]) ? true : false,
-				'id'		=> isset($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-id-' . $post_type]) : '',
-				'exclude'	=> isset($_POST[$this->prefix . 'trigger-post-type-exclude-' . $post_type]) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-post-type-exclude-' . $post_type]) : '',
-			);
-		}
-
 		return array(
-			'display_on'		=> isset($_POST[$this->prefix . 'trigger-display-on']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-display-on']) : '',
-			'categories'		=> isset($_POST[$this->prefix . 'trigger-categories-id']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-categories-id']) : '',
-			'tags'				=> isset($_POST[$this->prefix . 'trigger-tags-id']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-tags-id']) : '',
+			'sitewide'			=> isset($_POST[$this->prefix . 'trigger-sitewide']) && $_POST[$this->prefix . 'trigger-sitewide'] ? true : false,
+			'frontpage'			=> isset($_POST[$this->prefix . 'trigger-frontpage']) && $_POST[$this->prefix . 'trigger-frontpage'] ? true : false,
 			'post_types'		=> $post_types,
+			'taxonomies'		=> $taxonomies,
 			'referrer_type'		=> isset($_POST[$this->prefix . 'trigger-referrer-type']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-referrer-type']) : '',
 			'referrer_domain'	=> isset($_POST[$this->prefix . 'trigger-referrer-domain']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-referrer-domain']) : '',
 			'users'				=> isset($_POST[$this->prefix . 'trigger-users']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-users']) : '',
@@ -491,9 +721,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 // Get all tags and custom posts
 
-add_action( 'wp_ajax_nnr_dis_con_get_categories', 				'nnr_dis_con_get_categories_v1');
-add_action( 'wp_ajax_nnr_dis_con_get_tags', 					'nnr_dis_con_get_tags_v1');
-add_action( 'wp_ajax_nnr_dis_con_get_posts', 					'nnr_dis_con_get_posts_v1');
+add_action( 'wp_ajax_nnr_dis_con_get_posts', 'nnr_dis_con_get_posts_v1');
+add_action( 'wp_ajax_nnr_dis_con_get_terms', 'nnr_dis_con_get_terms_v1');
 
 /**
  * Get all Posts in post type
@@ -510,29 +739,15 @@ function nnr_dis_con_get_posts_v1() {
 }
 
 /**
- * Get all Categories
+ * Get all Terms by Taxonomy
  *
  * @access public
  * @static
  * @return void
  */
-function nnr_dis_con_get_categories_v1() {
+function nnr_dis_con_get_terms_v1() {
 
-	echo json_encode(get_categories());
-
-	die(); // this is required to terminate immediately and return a proper response
-}
-
-/**
- * Get all Tags
- *
- * @access public
- * @static
- * @return void
- */
-function nnr_dis_con_get_tags_v1() {
-
-	echo json_encode(get_tags());
+	echo json_encode(get_terms($_POST['taxonomy'], 'orderby=count&hide_empty=0'));
 
 	die(); // this is required to terminate immediately and return a proper response
 }
