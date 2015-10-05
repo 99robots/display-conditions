@@ -53,12 +53,16 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @param mixed $prefix
 	 * @return void
 	 */
-	function NNR_Display_Conditions_Settings_v1( $prefix = '', $text_domain = '' ) {
+	function __construct( $prefix = '', $text_domain = '' ) {
+
+		do_action('nnr_dis_con_before_new_settings_controller_v1');
 
 		$this->prefix = $prefix;
 		$this->text_domain = $text_domain;
 
 		$this->include_scripts();
+
+		do_action('nnr_dis_con_after_new_settings_controller_v1');
 	}
 
 	/**
@@ -69,6 +73,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function include_scripts() {
 
+		do_action('nnr_dis_con_before_settings_include_scripts_v1');
+
 		wp_register_style( 'selectize-css', plugins_url( 'css/selectize.bootstrap3.css', dirname(__FILE__)) );
 		wp_enqueue_style( 'selectize-css' );
 
@@ -77,13 +83,14 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		wp_register_script( 'display_conditions-js', plugins_url( 'js/settings.js', dirname(__FILE__)), array('jquery') );
 		wp_enqueue_script( 'display_conditions-js' );
-		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data' , array(
+		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data_v1', apply_filters('nnr_dis_con_settings_scripts_data', array(
 			'prefix'		=> $this->prefix,
 			'ajaxurl'       => admin_url( 'admin-ajax.php' ),
 			'post_types'	=> $this->get_post_types(),
 			'taxonomies'	=> $this->get_taxonomies(),
-		));
+		) ) );
 
+		do_action('nnr_dis_con_after_settings_include_scripts_v1');
 	}
 
 	/**
@@ -96,6 +103,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_all_settings( $display_settings, $args = array('default' => array(), 'help-text' => array()) ) {
+
+		do_action('nnr_dis_con_before_settings_display_all_v1');
 
 		// Display Headers
 
@@ -149,6 +158,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		echo $this->display_display_screen($display_settings['display_screen']);
 
+		do_action('nnr_dis_con_after_settings_display_all_v1');
+
 	}
 
 	/**
@@ -161,6 +172,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_sitewide( $sitewide, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_after_settings_sitewide_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -185,7 +198,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_sitewide_v1');
+
+		return apply_filters('nnr_dis_con_settings_sitewide_v1', $code);
 	}
 
 	/**
@@ -198,6 +213,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_frontpage( $frontpage, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_frontpage_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -222,7 +239,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_frontpage_v1');
+
+		return apply_filters('nnr_dis_con_settings_frontpage_v1', $code);
 	}
 
 	/**
@@ -236,6 +255,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_post_types( $post_types, $taxonomies, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_post_types_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -339,7 +360,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_post_types_v1');
+
+		return apply_filters('nnr_dis_con_settings_post_types_v1', $code);
 
 	}
 
@@ -353,6 +376,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_post_type_excludes( $post_types, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_post_type_excludes_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -384,7 +409,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_post_type_excludes_v1');
+
+		return apply_filters('nnr_dis_con_settings_post_type_excludes_v1', $code);
 
 	}
 
@@ -398,6 +425,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_taxonomy_excludes( $taxonomies, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_taxonomy_excludes_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -438,7 +467,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			}
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_taxonomy_excludes_v1');
+
+		return apply_filters('nnr_dis_con_settings_taxonomy_excludes_v1', $code);
 
 	}
 
@@ -452,6 +483,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_referrer_type( $referrer_type, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_referrer_type_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -481,7 +514,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_before_settings_referrer_type_v1');
+
+		return apply_filters('nnr_dis_con_settings_referrer_type_v1', $code);
 
 	}
 
@@ -495,6 +530,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_referrer_domain( $referrer_domain, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_referrer_domain_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -518,7 +555,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_referrer_domain_v1');
+
+		return apply_filters('nnr_dis_con_settings_referrer_domain_v1', $code);
 	}
 
 	/**
@@ -531,6 +570,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_users( $users, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_users_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -564,7 +605,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_users_v1');
+
+		return apply_filters('nnr_dis_con_settings_users_v1', $code);
 	}
 
 	/**
@@ -577,6 +620,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_user_roles( $user_roles, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_user_roles_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -615,7 +660,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$code .= '</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_user_roles_v1');
+
+		return apply_filters('nnr_dis_con_settings_user_roles_v1', $code);
 	}
 
 	/**
@@ -628,6 +675,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 * @return void
 	 */
 	function display_display_screen( $display_screen, $default = '', $help_text = null, $format = 'inline' ) {
+
+		do_action('nnr_dis_con_before_settings_display_screen_v1');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -659,7 +708,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		return $code;
+		do_action('nnr_dis_con_after_settings_display_screen_v1');
+
+		return apply_filters('nnr_dis_con_settings_display_screen_v1', $code);
 	}
 
 	/**
@@ -704,7 +755,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$roles[$role_name] = isset($_POST[$this->prefix . 'role-' . $role_name]) && $_POST[$this->prefix . 'role-' . $role_name] ? true : false;
 		}
 
-		return array(
+		return apply_filters('nnr_dis_con_settings_get_data_v1', array(
 			'sitewide'			=> isset($_POST[$this->prefix . 'trigger-sitewide']) && $_POST[$this->prefix . 'trigger-sitewide'] ? true : false,
 			'frontpage'			=> isset($_POST[$this->prefix . 'trigger-frontpage']) && $_POST[$this->prefix . 'trigger-frontpage'] ? true : false,
 			'post_types'		=> $post_types,
@@ -714,7 +765,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'users'				=> isset($_POST[$this->prefix . 'trigger-users']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-users']) : '',
 			'roles'				=> $roles,
 			'display_screen'	=> isset($_POST[$this->prefix . 'trigger-display-screen']) ? $this->sanitize_value($_POST[$this->prefix . 'trigger-display-screen']) : '',
-		);
+		) );
 
 	}
 }
@@ -733,7 +784,7 @@ add_action( 'wp_ajax_nnr_dis_con_get_terms', 'nnr_dis_con_get_terms_v1');
  */
 function nnr_dis_con_get_posts_v1() {
 
-	echo json_encode(get_posts('posts_per_page=-1&post_type=' . $_POST['post_type']));
+	echo json_encode( apply_filters('nnr_dis_con_get_posts_v1', get_posts('posts_per_page=-1&post_type=' . $_POST['post_type']) ) );
 
 	die(); // this is required to terminate immediately and return a proper response
 }
@@ -747,7 +798,7 @@ function nnr_dis_con_get_posts_v1() {
  */
 function nnr_dis_con_get_terms_v1() {
 
-	echo json_encode(get_terms($_POST['taxonomy'], 'orderby=count&hide_empty=0'));
+	echo json_encode( apply_filters('nnr_dis_con_get_terms_v1', get_terms($_POST['taxonomy'], 'orderby=count&hide_empty=0') ) );
 
 	die(); // this is required to terminate immediately and return a proper response
 }

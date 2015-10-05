@@ -25,6 +25,8 @@ class NNR_Display_Conditions_Base_v1 {
 	 */
 	function get_post_types( $attachment = true ) {
 
+		do_action('nnr_dis_con_before_get_post_types_v1');
+
 		$post_types = get_post_types(array('public' => true));
 
 		foreach( $post_types as $key => $post_type ) {
@@ -36,7 +38,9 @@ class NNR_Display_Conditions_Base_v1 {
 			}
 		}
 
-		return $post_types;
+		do_action('nnr_dis_con_after_get_post_types_v1');
+
+		return apply_filters('nnr_dis_con_get_post_types_v1', $post_types);
 	}
 
 	/**
@@ -46,6 +50,8 @@ class NNR_Display_Conditions_Base_v1 {
 	 * @return void
 	 */
 	function get_taxonomies($post_types = array()) {
+
+		do_action('nnr_dis_con_before_get_taxonomies_v1');
 
 		if ( count($post_types) < 1 ) {
 			$post_types = $this->get_post_types();
@@ -63,7 +69,9 @@ class NNR_Display_Conditions_Base_v1 {
 
 		}
 
-		return $taxonomies;
+		do_action('nnr_dis_con_after_get_taxonomies_v1');
+
+		return apply_filters('nnr_dis_con_get_taxonomies_v1', $taxonomies);
 
 	}
 
@@ -76,7 +84,7 @@ class NNR_Display_Conditions_Base_v1 {
 	 * @return void
 	 */
 	function sanitize_value( $value, $html = false ) {
-		return stripcslashes( sanitize_text_field( $value ) );
+		return apply_filters('nnr_dis_con_base_sanitize_value_v1', stripcslashes( sanitize_text_field( $value ) ) );
 	}
 
 }
