@@ -8,20 +8,20 @@ jQuery(document).ready(function($){
 
 	// Hide all settings
 
-	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').hide();
+	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').attr('readonly', 'readonly');
 
 	if (!$('#' + nnr_display_conditions_data.prefix + 'trigger-sitewide').prop('checked')) {
-	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').show();
+	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').removeAttr("readonly");
   	}
 
   	$('#' + nnr_display_conditions_data.prefix + 'trigger-sitewide').change(function(){
 
 	  	// Hide all settings
 
-		$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').hide();
+		$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').attr('readonly', 'readonly');;
 
 		if (!$(this).prop('checked')) {
-		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').show();
+		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').removeAttr("readonly");
 	  	}
 
   	});
@@ -166,23 +166,23 @@ jQuery(document).ready(function($){
 	if ( $('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').length != 0 ) {
 
 		var referrer_options = [
-			{id: 't.co'},
-			{id: 'www.facebook.com'},
-			{id: 'plus.url.google.com'},
-			{id: 'www.linkedin.com'},
+			{id: 't.co', value: 't.co (Twitter)'},
+			{id: 'www.facebook.com', value: 'www.facebook.com (Facebook)'},
+			{id: 'plus.url.google.com', value: 'plus.url.google.com (Google+)'},
+			{id: 'www.linkedin.com', value:'www.linkedin.com (LinkedIn)'},
 		];
 
 		var temp_referrer_options = $('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').attr('data-urls').split(',');
 
 		$.each(temp_referrer_options, function( index, value ) {
-		  	referrer_options.push({id: value});
+		  	referrer_options.push({id: value, value: value});
 		});
 
 		$('#' + nnr_display_conditions_data.prefix + 'trigger-referrer-domain').selectize({
 			plugins: ['remove_button'],
 			create: true,
 			valueField: 'id',
-			labelField: 'id',
+			labelField: 'value',
 			searchField: 'id',
 			options: referrer_options,
 		});

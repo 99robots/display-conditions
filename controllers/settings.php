@@ -83,7 +83,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		wp_register_script( 'display_conditions-js', plugins_url( 'js/settings.js', dirname(__FILE__)), array('jquery') );
 		wp_enqueue_script( 'display_conditions-js' );
-		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data_v1', apply_filters('nnr_dis_con_settings_scripts_data', array(
+		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data', apply_filters('nnr_dis_con_settings_scripts_data_v1', array(
 			'prefix'		=> $this->prefix,
 			'ajaxurl'       => admin_url( 'admin-ajax.php' ),
 			'post_types'	=> $this->get_post_types(),
@@ -193,9 +193,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			<div class="nnr-block-group">
 				<label>
 					<input type="checkbox" id="' . $this->prefix . 'trigger-sitewide" name="' . $this->prefix . 'trigger-sitewide" ' . (isset($sitewide) && $sitewide ? 'checked="checked"' : '' ) . '/>' . __('Site Wide', $this->text_domain) .
-					$help_text .
-				'</label>
-			</div>';
+				'</label>' .
+				$help_text .
+			'</div>';
 		}
 
 		do_action('nnr_dis_con_after_settings_sitewide_v1');
@@ -542,7 +542,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			<div class="form-group ' . $this->prefix . 'trigger-referrer-domain ' . $this->prefix . 'trigger-referrer-specific">
 				<label class="col-sm-3 control-label">' . __('Referrer Domains', $this->text_domain) . '</label>
 				<div class="col-sm-9">
-					<input class="form-control" id="' . $this->prefix . 'trigger-referrer-domain" name="' . $this->prefix . 'trigger-referrer-domain" placeholder="' . __('e.g t.co,www.facebook.com,plus.url.google.com,www.linkedin.com', $this->text_domain) . '" value="' . (isset($referrer_domain) ? $referrer_domain : $default) . '" data-urls="' . (isset($referrer_domain) ? $referrer_domain : $default) . '"/>' .
+					<input class="form-control" id="' . $this->prefix . 'trigger-referrer-domain" name="' . $this->prefix . 'trigger-referrer-domain" placeholder="' . __('Select or Add Domains', $this->text_domain) . '" value="' . (isset($referrer_domain) ? $referrer_domain : $default) . '" data-urls="' . (isset($referrer_domain) ? $referrer_domain : $default) . '"/>' .
 					$help_text .
 				'</div>
 			</div>';
@@ -550,7 +550,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$code = '<!-- Referrer -->
 			<div class="nnr-block-group ' . $this->prefix . 'trigger-referrer-domain ' . $this->prefix . 'trigger-referrer-specific">
 				<label class="control-label">' . __('Referrer Domains', $this->text_domain) . '</label>
-				<input class="form-control" id="' . $this->prefix . 'trigger-referrer-domain" name="' . $this->prefix . 'trigger-referrer-domain" placeholder="' . __('e.g t.co,www.facebook.com,plus.url.google.com,www.linkedin.com', $this->text_domain) . '" value="' . (isset($referrer_domain) ? $referrer_domain : $default) . '" data-urls="' . (isset($referrer_domain) ? $referrer_domain : $default) . '"/>' .
+				<input class="form-control" id="' . $this->prefix . 'trigger-referrer-domain" name="' . $this->prefix . 'trigger-referrer-domain" placeholder="' . __('Select or Add Domains', $this->text_domain) . '" value="' . (isset($referrer_domain) ? $referrer_domain : $default) . '" data-urls="' . (isset($referrer_domain) ? $referrer_domain : $default) . '"/>' .
 					$help_text .
 			'</div>';
 		}
