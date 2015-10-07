@@ -8,20 +8,20 @@ jQuery(document).ready(function($){
 
 	// Hide all settings
 
-	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').attr('readonly', 'readonly');
+	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').hide();
 
 	if (!$('#' + nnr_display_conditions_data.prefix + 'trigger-sitewide').prop('checked')) {
-	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').removeAttr("readonly");
+	  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').show();
   	}
 
-  	$('#' + nnr_display_conditions_data.prefix + 'trigger-sitewide').change(function(){
+  	$(document).on('change', '#' + nnr_display_conditions_data.prefix + 'trigger-sitewide', function(){
 
 	  	// Hide all settings
 
-		$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').attr('readonly', 'readonly');;
+		$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').hide();
 
 		if (!$(this).prop('checked')) {
-		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').removeAttr("readonly");
+		  	$('.' + nnr_display_conditions_data.prefix + 'trigger-sitewide').show();
 	  	}
 
   	});
