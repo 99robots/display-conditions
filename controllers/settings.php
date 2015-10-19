@@ -688,9 +688,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 				<label for="' . $this->prefix . 'trigger-display-screen" class="col-sm-3 control-label">' . __('Display on Screen', $this->text_domain) . '</label>
 				<div class="col-sm-9">
 					<select id="' . $this->prefix . 'trigger-display-screen" name="' . $this->prefix . 'trigger-display-screen">
-						<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Display on both Computers and Mobile Devices', $this->text_domain) . '</option>
-						<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Display only on Computers', $this->text_domain) . '</option>
-						<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Display only on Mobile Devices', $this->text_domain) . '</option>
+						<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Computers and Mobile Devices', $this->text_domain) . '</option>
+						<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Only Computers', $this->text_domain) . '</option>
+						<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Only Mobile Devices', $this->text_domain) . '</option>
 					</select>' .
 				$help_text .
 				'</div>
@@ -700,9 +700,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			<div class="nnr-block-group">
 				<label for="' . $this->prefix . 'trigger-display-screen">' . __('Display on Screen', $this->text_domain) . '</label>
 				<select id="' . $this->prefix . 'trigger-display-screen" name="' . $this->prefix . 'trigger-display-screen">
-						<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Display on both Computers and Mobile Devices', $this->text_domain) . '</option>
-						<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Display only on Computers', $this->text_domain) . '</option>
-						<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Display only on Mobile Devices', $this->text_domain) . '</option>
+						<option value="both" ' . selected('both', $display_screen, false) . '>' . __('Computers and Mobile Devices', $this->text_domain) . '</option>
+						<option value="computer" ' . selected('computer', $display_screen, false) . '>' . __('Only Computers', $this->text_domain) . '</option>
+						<option value="device" ' . selected('device', $display_screen, false) . '>' . __('Only Mobile Devices', $this->text_domain) . '</option>
 					</select>' .
 				$help_text .
 			'</div>';
