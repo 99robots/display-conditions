@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 // Check if class already exists
 
-if (!class_exists("NNR_Display_Conditions_Settings_v1")):
+if (!class_exists("NNR_Display_Conditions_Settings_v2")):
 
 /* ================================================================================
  *
@@ -15,16 +15,16 @@ if (!class_exists("NNR_Display_Conditions_Settings_v1")):
  *
  ================================================================================ */
 
-if ( !class_exists('NNR_Display_Conditions_Base_v1') ) {
+if ( !class_exists('NNR_Display_Conditions_Base_v2') ) {
 	require_once( dirname(dirname(__FILE__)) . '/base.php');
 }
 
 /**
- * NNR_Display_Conditions_Settings_v1 class.
+ * NNR_Display_Conditions_Settings_v2 class.
  *
- * @extends NNR_Display_Conditions_Base_v1
+ * @extends NNR_Display_Conditions_Base_v2
  */
-class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 {
+class NNR_Display_Conditions_Settings_v2 extends NNR_Display_Conditions_Base_v2 {
 
 	/**
 	 * prefix
@@ -55,14 +55,14 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function __construct( $prefix = '', $text_domain = '' ) {
 
-		do_action('nnr_dis_con_before_new_settings_controller_v1');
+		do_action('nnr_dis_con_before_new_settings_controller_v2');
 
 		$this->prefix = $prefix;
 		$this->text_domain = $text_domain;
 
 		$this->include_scripts();
 
-		do_action('nnr_dis_con_after_new_settings_controller_v1');
+		do_action('nnr_dis_con_after_new_settings_controller_v2');
 	}
 
 	/**
@@ -73,7 +73,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function include_scripts() {
 
-		do_action('nnr_dis_con_before_settings_include_scripts_v1');
+		do_action('nnr_dis_con_before_settings_include_scripts_v2');
 
 		wp_register_style( 'selectize-css', plugins_url( 'css/selectize.bootstrap3.css', dirname(__FILE__)) );
 		wp_enqueue_style( 'selectize-css' );
@@ -83,14 +83,14 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		wp_register_script( 'display_conditions-js', plugins_url( 'js/settings.js', dirname(__FILE__)), array('jquery') );
 		wp_enqueue_script( 'display_conditions-js' );
-		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data', apply_filters('nnr_dis_con_settings_scripts_data_v1', array(
+		wp_localize_script( 'display_conditions-js', 'nnr_display_conditions_data', apply_filters('nnr_dis_con_settings_scripts_data_v2', array(
 			'prefix'		=> $this->prefix,
 			'ajaxurl'       => admin_url( 'admin-ajax.php' ),
 			'post_types'	=> $this->get_post_types(),
 			'taxonomies'	=> $this->get_taxonomies(),
 		) ) );
 
-		do_action('nnr_dis_con_after_settings_include_scripts_v1');
+		do_action('nnr_dis_con_after_settings_include_scripts_v2');
 	}
 
 	/**
@@ -104,7 +104,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_all_settings( $display_settings, $args = array('default' => array(), 'help-text' => array()) ) {
 
-		do_action('nnr_dis_con_before_settings_display_all_v1');
+		do_action('nnr_dis_con_before_settings_display_all_v2');
 
 		// Display Headers
 
@@ -158,7 +158,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		echo $this->display_display_screen($display_settings['display_screen']);
 
-		do_action('nnr_dis_con_after_settings_display_all_v1');
+		do_action('nnr_dis_con_after_settings_display_all_v2');
 
 	}
 
@@ -173,7 +173,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_sitewide( $sitewide, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_after_settings_sitewide_v1');
+		do_action('nnr_dis_con_after_settings_sitewide_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -198,9 +198,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		do_action('nnr_dis_con_after_settings_sitewide_v1');
+		do_action('nnr_dis_con_after_settings_sitewide_v2');
 
-		return apply_filters('nnr_dis_con_settings_sitewide_v1', $code);
+		return apply_filters('nnr_dis_con_settings_sitewide_v2', $code);
 	}
 
 	/**
@@ -214,7 +214,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_frontpage( $frontpage, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_frontpage_v1');
+		do_action('nnr_dis_con_before_settings_frontpage_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -239,9 +239,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			</div>';
 		}
 
-		do_action('nnr_dis_con_after_settings_frontpage_v1');
+		do_action('nnr_dis_con_after_settings_frontpage_v2');
 
-		return apply_filters('nnr_dis_con_settings_frontpage_v1', $code);
+		return apply_filters('nnr_dis_con_settings_frontpage_v2', $code);
 	}
 
 	/**
@@ -256,7 +256,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_post_types( $post_types, $taxonomies, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_post_types_v1');
+		do_action('nnr_dis_con_before_settings_post_types_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -360,9 +360,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		}
 
-		do_action('nnr_dis_con_after_settings_post_types_v1');
+		do_action('nnr_dis_con_after_settings_post_types_v2');
 
-		return apply_filters('nnr_dis_con_settings_post_types_v1', $code);
+		return apply_filters('nnr_dis_con_settings_post_types_v2', $code);
 
 	}
 
@@ -377,7 +377,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_post_type_excludes( $post_types, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_post_type_excludes_v1');
+		do_action('nnr_dis_con_before_settings_post_type_excludes_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -409,9 +409,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 		}
 
-		do_action('nnr_dis_con_after_settings_post_type_excludes_v1');
+		do_action('nnr_dis_con_after_settings_post_type_excludes_v2');
 
-		return apply_filters('nnr_dis_con_settings_post_type_excludes_v1', $code);
+		return apply_filters('nnr_dis_con_settings_post_type_excludes_v2', $code);
 
 	}
 
@@ -426,7 +426,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_taxonomy_excludes( $taxonomies, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_taxonomy_excludes_v1');
+		do_action('nnr_dis_con_before_settings_taxonomy_excludes_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -467,9 +467,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			}
 		}
 
-		do_action('nnr_dis_con_after_settings_taxonomy_excludes_v1');
+		do_action('nnr_dis_con_after_settings_taxonomy_excludes_v2');
 
-		return apply_filters('nnr_dis_con_settings_taxonomy_excludes_v1', $code);
+		return apply_filters('nnr_dis_con_settings_taxonomy_excludes_v2', $code);
 
 	}
 
@@ -484,7 +484,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_referrer_type( $referrer_type, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_referrer_type_v1');
+		do_action('nnr_dis_con_before_settings_referrer_type_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -514,9 +514,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		do_action('nnr_dis_con_before_settings_referrer_type_v1');
+		do_action('nnr_dis_con_before_settings_referrer_type_v2');
 
-		return apply_filters('nnr_dis_con_settings_referrer_type_v1', $code);
+		return apply_filters('nnr_dis_con_settings_referrer_type_v2', $code);
 
 	}
 
@@ -531,7 +531,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_referrer_domain( $referrer_domain, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_referrer_domain_v1');
+		do_action('nnr_dis_con_before_settings_referrer_domain_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -555,9 +555,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		do_action('nnr_dis_con_after_settings_referrer_domain_v1');
+		do_action('nnr_dis_con_after_settings_referrer_domain_v2');
 
-		return apply_filters('nnr_dis_con_settings_referrer_domain_v1', $code);
+		return apply_filters('nnr_dis_con_settings_referrer_domain_v2', $code);
 	}
 
 	/**
@@ -571,7 +571,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_users( $users, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_users_v1');
+		do_action('nnr_dis_con_before_settings_users_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -605,9 +605,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		do_action('nnr_dis_con_after_settings_users_v1');
+		do_action('nnr_dis_con_after_settings_users_v2');
 
-		return apply_filters('nnr_dis_con_settings_users_v1', $code);
+		return apply_filters('nnr_dis_con_settings_users_v2', $code);
 	}
 
 	/**
@@ -621,7 +621,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_user_roles( $user_roles, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_user_roles_v1');
+		do_action('nnr_dis_con_before_settings_user_roles_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -660,9 +660,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$code .= '</div>';
 		}
 
-		do_action('nnr_dis_con_after_settings_user_roles_v1');
+		do_action('nnr_dis_con_after_settings_user_roles_v2');
 
-		return apply_filters('nnr_dis_con_settings_user_roles_v1', $code);
+		return apply_filters('nnr_dis_con_settings_user_roles_v2', $code);
 	}
 
 	/**
@@ -676,7 +676,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 	 */
 	function display_display_screen( $display_screen, $default = '', $help_text = null, $format = 'inline' ) {
 
-		do_action('nnr_dis_con_before_settings_display_screen_v1');
+		do_action('nnr_dis_con_before_settings_display_screen_v2');
 
 		if ( isset($help_text) ) {
 			$help_text = '<em class="help-block">' . __($help_text, $this->text_domain) . '</em>';
@@ -708,9 +708,9 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			'</div>';
 		}
 
-		do_action('nnr_dis_con_after_settings_display_screen_v1');
+		do_action('nnr_dis_con_after_settings_display_screen_v2');
 
-		return apply_filters('nnr_dis_con_settings_display_screen_v1', $code);
+		return apply_filters('nnr_dis_con_settings_display_screen_v2', $code);
 	}
 
 	/**
@@ -755,7 +755,7 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 			$roles[$role_name] = isset($_POST[$this->prefix . 'role-' . $role_name]) && $_POST[$this->prefix . 'role-' . $role_name] ? true : false;
 		}
 
-		return apply_filters('nnr_dis_con_settings_get_data_v1', array(
+		return apply_filters('nnr_dis_con_settings_get_data_v2', array(
 			'sitewide'			=> isset($_POST[$this->prefix . 'trigger-sitewide']) && $_POST[$this->prefix . 'trigger-sitewide'] ? true : false,
 			'frontpage'			=> isset($_POST[$this->prefix . 'trigger-frontpage']) && $_POST[$this->prefix . 'trigger-frontpage'] ? true : false,
 			'post_types'		=> $post_types,
@@ -772,8 +772,8 @@ class NNR_Display_Conditions_Settings_v1 extends NNR_Display_Conditions_Base_v1 
 
 // Get all tags and custom posts
 
-add_action( 'wp_ajax_nnr_dis_con_get_posts', 'nnr_dis_con_get_posts_v1');
-add_action( 'wp_ajax_nnr_dis_con_get_terms', 'nnr_dis_con_get_terms_v1');
+add_action( 'wp_ajax_nnr_dis_con_get_posts', 'nnr_dis_con_get_posts_v2');
+add_action( 'wp_ajax_nnr_dis_con_get_terms', 'nnr_dis_con_get_terms_v2');
 
 /**
  * Get all Posts in post type
@@ -782,9 +782,22 @@ add_action( 'wp_ajax_nnr_dis_con_get_terms', 'nnr_dis_con_get_terms_v1');
  * @static
  * @return void
  */
-function nnr_dis_con_get_posts_v1() {
+function nnr_dis_con_get_posts_v2() {
 
-	echo json_encode( apply_filters('nnr_dis_con_get_posts_v1', get_posts('posts_per_page=-1&post_type=' . $_POST['post_type']) ) );
+	$post_data = array();
+	$post_types = get_post_types();
+
+	if ( isset($_POST['post_type']) && in_array($_POST['post_type'], $post_types) ) {
+
+		global $wpdb;
+
+		$post_data = $wpdb->get_results( "SELECT ID, post_title, post_type
+	    	FROM " . $wpdb->prefix . "posts
+			WHERE post_type = '" . $_POST['post_type'] . "'
+			AND post_status IN('publish', 'inherit')" );
+	}
+
+	echo json_encode($post_data);
 
 	die(); // this is required to terminate immediately and return a proper response
 }
@@ -796,9 +809,9 @@ function nnr_dis_con_get_posts_v1() {
  * @static
  * @return void
  */
-function nnr_dis_con_get_terms_v1() {
+function nnr_dis_con_get_terms_v2() {
 
-	echo json_encode( apply_filters('nnr_dis_con_get_terms_v1', get_terms($_POST['taxonomy'], 'orderby=count&hide_empty=0') ) );
+	echo json_encode( apply_filters('nnr_dis_con_get_terms_v2', get_terms($_POST['taxonomy'], 'orderby=count&hide_empty=0') ) );
 
 	die(); // this is required to terminate immediately and return a proper response
 }

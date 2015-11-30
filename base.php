@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 
 // Check if class already exists
 
-if (!class_exists("NNR_Display_Conditions_Base_v1")):
+if (!class_exists("NNR_Display_Conditions_Base_v2")):
 
 /* ================================================================================
  *
@@ -15,7 +15,7 @@ if (!class_exists("NNR_Display_Conditions_Base_v1")):
  *
  ================================================================================ */
 
-class NNR_Display_Conditions_Base_v1 {
+class NNR_Display_Conditions_Base_v2 {
 
 	/**
 	 * Get post types
@@ -25,7 +25,7 @@ class NNR_Display_Conditions_Base_v1 {
 	 */
 	function get_post_types( $attachment = true ) {
 
-		do_action('nnr_dis_con_before_get_post_types_v1');
+		do_action('nnr_dis_con_before_get_post_types_v2');
 
 		$post_types = get_post_types(array('public' => true));
 
@@ -38,9 +38,9 @@ class NNR_Display_Conditions_Base_v1 {
 			}
 		}
 
-		do_action('nnr_dis_con_after_get_post_types_v1');
+		do_action('nnr_dis_con_after_get_post_types_v2');
 
-		return apply_filters('nnr_dis_con_get_post_types_v1', $post_types);
+		return apply_filters('nnr_dis_con_get_post_types_v2', $post_types);
 	}
 
 	/**
@@ -51,7 +51,7 @@ class NNR_Display_Conditions_Base_v1 {
 	 */
 	function get_taxonomies($post_types = array()) {
 
-		do_action('nnr_dis_con_before_get_taxonomies_v1');
+		do_action('nnr_dis_con_before_get_taxonomies_v2');
 
 		if ( count($post_types) < 1 ) {
 			$post_types = $this->get_post_types();
@@ -69,9 +69,9 @@ class NNR_Display_Conditions_Base_v1 {
 
 		}
 
-		do_action('nnr_dis_con_after_get_taxonomies_v1');
+		do_action('nnr_dis_con_after_get_taxonomies_v2');
 
-		return apply_filters('nnr_dis_con_get_taxonomies_v1', $taxonomies);
+		return apply_filters('nnr_dis_con_get_taxonomies_v2', $taxonomies);
 
 	}
 
@@ -84,7 +84,7 @@ class NNR_Display_Conditions_Base_v1 {
 	 * @return void
 	 */
 	function sanitize_value( $value, $html = false ) {
-		return apply_filters('nnr_dis_con_base_sanitize_value_v1', stripcslashes( sanitize_text_field( $value ) ) );
+		return apply_filters('nnr_dis_con_base_sanitize_value_v2', stripcslashes( sanitize_text_field( $value ) ) );
 	}
 
 }

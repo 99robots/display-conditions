@@ -93,7 +93,13 @@ jQuery(document).ready(function($){
 		  	var post_type = '';
 
 		  	$.each(response, function( index, value ) {
-			  	post_options.push({id: value.ID, name: value.post_title});
+			  	var post_title = 'No title';
+
+			  	if ( value.post_title != '' ) {
+				  	post_title = value.post_title;
+			  	}
+
+			  	post_options.push({id: value.ID, name: post_title});
 			  	post_type = value.post_type;
 			});
 
